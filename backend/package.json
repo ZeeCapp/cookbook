@@ -1,0 +1,11 @@
+{
+  "type": "module",
+  "author": {
+    "name": "Jan Ligač",
+    "email": "ligac.jan@volny.cz"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "lodash": "^4.17.21"
+  }
+}
