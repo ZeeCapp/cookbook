@@ -2,8 +2,12 @@ import express from "express"
 import z from "zod"
 
 import db from "../lib/db.js";
+import { authenticate, authorize } from "../middleware/authMiddleware.js"
 
 const recipesRouter = express.Router();
+
+recipesRouter.use(authenticate());
+recipesRouter.use(authorize(["admin", "user"]));
 
 recipesRouter.get("/", async (req, res) => {
     /**
@@ -11,9 +15,9 @@ recipesRouter.get("/", async (req, res) => {
     */
     const db = req.app.get("db");
 
-    const userAuth = JSON.parse(Buffer.from(req.cookies.auth, "base64").toString("utf-8"));
+    const userAuth = JSON.parse(Buffer.from(req.headers.authorization.split(" ")[1], "base64").toString("utf-8"));
 
-    res.send(db.getRecipeList(userAuth.userId));
+    res.send(db.getUsersRecipeList(userAuth.userId));
     return;
 });
 

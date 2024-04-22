@@ -63,7 +63,7 @@ export default class db {
         }
     }
 
-    getRecipeList(userId) {
+    getUsersRecipeList(userId) {
         const recipes = _.cloneDeep(data.recipes);
 
         for (const recipe of recipes) {
@@ -76,5 +76,16 @@ export default class db {
         }
 
         return recipes.map(recipe => { return _.pick(recipe, ["id", "previewBase64", "title", "user", "avgRating", "favourite"]) });
+    }
+
+    getUserDataForToken(email) {
+        const user = _.cloneDeep(data.users.find(user => user.email === email));
+
+        if (user) {
+            user.role = data.roles.find(role => role.id === user.roleId).role;
+            return _.pick(user, ["id", "email", "name", "surname", "role"]);
+        }
+
+        return undefined;
     }
 }
