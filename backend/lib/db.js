@@ -3,6 +3,10 @@ import _ from "lodash"
 import data from "./data.js"
 
 export default class db {
+    #generateId(collection) {
+        return collection.reduce((prevValue, currentValue) => { return currentValue.id >= prevValue ? currentValue.id + 1 : prevValue }, 1);
+    }
+
     #getRecipeById(id) {
         const idNumber = Number.parseInt(id);
 
@@ -55,6 +59,7 @@ export default class db {
 
         return {
             ...(_.pick(recipe, ["id", "title", "previewBase64", "contentHTML"])),
+            ingredients: data.ingredients.filter(ingredient => ingredient.recipeId === recipe.id).map(({ id, title, content }) => { return { id, title, content } }),
             avgRating: this.#getAvgRatingByRecipeId(recipe.id),
             user: {
                 ...(_.pick(user, ["id", "name", "surname"]))
@@ -71,7 +76,7 @@ export default class db {
             recipe.avgRating = this.#getAvgRatingByRecipeId(recipe.id);
 
             if (userId !== null && userId !== undefined) {
-                recipe.favourite = data.bookmarks.find(bookmark => bookmark.userId === userId && bookmark.recipeId === recipe.id);
+                recipe.favourite = data.bookmarks.find(bookmark => bookmark.userId === userId && bookmark.recipeId === recipe.id) ? true : false;
             }
         }
 
@@ -87,5 +92,29 @@ export default class db {
         }
 
         return undefined;
+    }
+
+    createBookmark(userId, recipeId) {
+        if (userId && recipeId) {
+            if (data.bookmarks.find(bookmark => bookmark.recipeId === recipeId && bookmark.userId === userId)) {
+                return true;
+            }
+
+            data.bookmarks.push({ id: this.#generateId(data.bookmarks), userId, recipeId });
+            return true;
+        }
+        return false;
+    }
+
+    removeBookmark(userId, recipeId) {
+        if (userId && recipeId) {
+            const bookmarkIndex = data.bookmarks.findIndex(bookmark => bookmark.recipeId === recipeId && bookmark.userId === userId);
+
+            if (bookmarkIndex > -1) {
+                data.bookmarks.splice(bookmarkIndex, 1);
+            }
+            return true;
+        }
+        return false;
     }
 }
