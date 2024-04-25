@@ -117,4 +117,74 @@ export default class db {
         }
         return false;
     }
+
+    createComment(userId, recipeId, content) {
+        if (userId && recipeId && content) {
+            data.comments.push({ id: this.#generateId(data.comments), userId, recipeId, content });
+            return true;
+        }
+        return false;
+    }
+
+    removeComment(recipeId, commentId) {
+        const commentIndex = data.comments.findIndex(({ id, recipeId: recId }) => { return id === commentId && recId === recipeId });
+
+        if (commentIndex > -1) {
+            data.comments.splice(commentIndex, 1);
+        }
+        return true;
+    }
+
+    addRating(userId, recipeId, value) {
+        if (recipeId && value) {
+            data.ratings.push({ id: this.#generateId(data.ratings), userId, recipeId, value });
+
+            return true;
+        }
+        return false;
+    }
+
+    removeRating(ratingId) {
+        const ratingIndex = data.ratings.findIndex(({ id }) => { return id === ratingId });
+
+        if (ratingIndex > -1) {
+            data.ratings.splice(ratingIndex, 1);
+        }
+        return true;
+    }
+
+    addRecipe({ userId, title, previewBase64 = "", contentHTML = "" }) {
+        if (userId && title) {
+            data.recipes.push({ id: this.#generateId(data.recipes), userId, title, previewBase64, contentHTML });
+            return true;
+        }
+        return false;
+    }
+
+    updateRecipe(recipeId, title, previewBase64, contentHTML) {
+        const currentRecipeIndex = data.recipes.findIndex(({ id }) => { return id === recipeId });
+
+        if (currentRecipeIndex > -1) {
+            data.recipes[currentRecipeIndex] = { ...data.recipes[currentRecipeIndex], ...{ title, previewBase64, contentHTML } };
+            return true;
+        }
+        return false;
+    }
+
+    removeRecipe(recipeId) {
+        const recipeIndex = data.recipes.findIndex(({ id }) => { return id === recipeId });
+
+        if (recipeIndex > -1) {
+            data.recipes.splice(recipeIndex, 1);
+        }
+        return true;
+    }
+
+    addUser({ name, surname, email }) {
+        if (name, surname, email) {
+            data.users.push({ id: this.#generateId(data.users), name, surname, email });
+            return true;
+        }
+        return false;
+    }
 }
