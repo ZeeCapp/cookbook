@@ -14,14 +14,14 @@ export default {
             id: 1,
             name: "Jan",
             surname: "Ligač",
-            email: "ligac@test.cz",
+            email: "admin@test.cz",
             roleId: 2
         },
         {
             id: 2,
             name: "John",
             surname: "doe",
-            email: "doe@test.cz",
+            email: "user@test.cz",
             roleId: 1
         }
     ],
@@ -90,6 +90,12 @@ export default {
             userId: 2,
             recipeId: 1,
             content: "Nice recipe!"
+        },
+        {
+            id: 2,
+            userId: 1,
+            recipeId: 1,
+            content: "Test"
         }
     ],
     ratings: [

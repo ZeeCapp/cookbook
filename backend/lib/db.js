@@ -7,12 +7,28 @@ export default class db {
         return collection.reduce((prevValue, currentValue) => { return currentValue.id >= prevValue ? currentValue.id + 1 : prevValue }, 1);
     }
 
-    #getRecipeById(id) {
+    getRecipeById(id) {
         const idNumber = Number.parseInt(id);
 
         if (isNaN(idNumber) || idNumber < 1) return undefined;
 
         return data.recipes.find((recipe => recipe.id === idNumber));
+    }
+
+    getCommentById(id) {
+        const idNumber = Number.parseInt(id);
+
+        if (isNaN(idNumber) || idNumber < 1) return undefined;
+
+        return data.comments.find((comment => comment.id === idNumber));
+    }
+
+    getRatingById(id) {
+        const idNumber = Number.parseInt(id);
+
+        if (isNaN(idNumber) || idNumber < 1) return undefined;
+
+        return data.ratings.find((rating => rating.id === idNumber));
     }
 
     #getAvgRatingByRecipeId(recipeId) {
@@ -46,7 +62,7 @@ export default class db {
     }
 
     getRecipeDetail(recipeId) {
-        const recipe = this.#getRecipeById(recipeId);
+        const recipe = this.getRecipeById(recipeId);
 
         if (recipe === undefined) return undefined;
 
@@ -153,19 +169,44 @@ export default class db {
         return true;
     }
 
-    addRecipe({ userId, title, previewBase64 = "", contentHTML = "" }) {
+    addRecipe(userId, title, previewBase64 = "", contentHTML = "", ingredients) {
         if (userId && title) {
-            data.recipes.push({ id: this.#generateId(data.recipes), userId, title, previewBase64, contentHTML });
+            const newRecipe = { id: this.#generateId(data.recipes), userId, title, previewBase64, contentHTML };
+            data.recipes.push(newRecipe);
+            if (Array.isArray(ingredients)) {
+                for (const ingredient of ingredients) {
+                    data.ingredients.push({ id: this.#generateId(data.ingredients), recipeId: newRecipe.id, ...ingredient })
+                }
+            }
             return true;
         }
         return false;
     }
 
-    updateRecipe(recipeId, title, previewBase64, contentHTML) {
+    updateRecipe(recipeId, title, previewBase64, contentHTML, ingredients) {
         const currentRecipeIndex = data.recipes.findIndex(({ id }) => { return id === recipeId });
 
+        title ??= data.recipes[currentRecipeIndex].title;
+        previewBase64 ??= data.recipes[currentRecipeIndex].previewBase64;
+        contentHTML ??= data.recipes[currentRecipeIndex].contentHTML;
+
         if (currentRecipeIndex > -1) {
-            data.recipes[currentRecipeIndex] = { ...data.recipes[currentRecipeIndex], ...{ title, previewBase64, contentHTML } };
+            data.recipes[currentRecipeIndex] = {
+                ...data.recipes[currentRecipeIndex],
+                ...{ title, previewBase64, contentHTML }
+            };
+
+            const recipeIngredients = data.ingredients.filter(ingredient => ingredient.recipeId === recipeId);
+
+            if (Array.isArray(ingredients)) {
+                for (const currentIngredient of recipeIngredients) {
+                    data.ingredients.splice(data.ingredients.findIndex(ingredient => ingredient.id === currentIngredient.id), 1);
+                }
+
+                for (const ingredient of ingredients) {
+                    data.ingredients.push({ id: this.#generateId(data.ingredients), recipeId, ...ingredient })
+                }
+            }
             return true;
         }
         return false;
@@ -180,9 +221,9 @@ export default class db {
         return true;
     }
 
-    addUser({ name, surname, email }) {
+    addUser(name, surname, email) {
         if (name, surname, email) {
-            data.users.push({ id: this.#generateId(data.users), name, surname, email });
+            data.users.push({ id: this.#generateId(data.users), name, surname, email, roleId: 1 });
             return true;
         }
         return false;

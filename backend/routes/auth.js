@@ -39,4 +39,38 @@ authRouter.get("/login?:login", async (req, res) => {
     }
 });
 
+authRouter.post("/register", async (req, res) => {
+    const userBlueprint = z.object({
+        email: z.string().trim().email(),
+        name: z.string().trim().min(1),
+        surname: z.string().trim().min(1)
+    })
+
+    const { data, error } = await userBlueprint.safeParseAsync({
+        email: req.query.email,
+        name: req.query.name,
+        surname: req.query.surname
+    });
+
+    if (error) {
+        res.status(400);
+        res.send({
+            error: "Validation error",
+            detail: error.format()
+        });
+        return;
+    }
+
+    /**
+    * @type db
+    */
+    const db = req.app.get("db");
+
+    if (db.addUser(data.name, data.surname, data.email)) {
+        res.sendStatus(201);
+        return;
+    }
+    res.sendStatus(400);
+});
+
 export default authRouter;

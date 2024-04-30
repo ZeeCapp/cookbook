@@ -1,8 +1,11 @@
 import express from "express"
 
 import db from "./lib/db.js"
-import recipesRouter from "./routes/recipes.js";
+import recipesRouter from "./routes/recipe.js";
 import authRouter from "./routes/auth.js"
+import bookmarkRouter from "./routes/bookmark.js"
+import commentRouter from "./routes/comment.js"
+import ratingRouter from "./routes/rating.js"
 
 const PORT = 3000;
 
@@ -15,7 +18,10 @@ app.use(express.json({
 }));
 
 app.use("/auth", authRouter);
-app.use("/recipes", recipesRouter);
+app.use("/recipe", recipesRouter);
+app.use("/bookmark", bookmarkRouter);
+app.use("/comment", commentRouter);
+app.use("/rating", ratingRouter);
 
 app.listen(PORT, () => {
     console.log(`server listening on port: ${PORT}`);
