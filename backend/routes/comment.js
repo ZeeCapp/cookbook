@@ -12,7 +12,7 @@ commentsRouter.use(authorize(["admin", "user"]));
 
 commentsRouter.post("/:recipeId/:text", async (req, res) => {
     const idParseResult = await z.number().min(1).safeParseAsync(Number.parseInt(req.params.recipeId));
-    const textParseResult = await z.string().min(1).max(200).safeParseAsync(req.query.text);
+    const textParseResult = await z.string().min(1).max(200).safeParseAsync(req.params.text);
 
     if (idParseResult.error) {
         res.status(400);
@@ -45,7 +45,7 @@ commentsRouter.post("/:recipeId/:text", async (req, res) => {
 
 commentsRouter.delete("/:recipeId/:commentId", async (req, res) => {
     const idParseResult = await z.number().min(1).safeParseAsync(Number.parseInt(req.params.recipeId));
-    const commentIdParseResult = await z.number().min(1).safeParseAsync(Number.parseInt(req.query.commentId));
+    const commentIdParseResult = await z.number().min(1).safeParseAsync(Number.parseInt(req.params.commentId));
 
     if (idParseResult.error) {
         res.status(400);
@@ -70,12 +70,17 @@ commentsRouter.delete("/:recipeId/:commentId", async (req, res) => {
 
     const currentComment = db.getCommentById(commentIdParseResult.data);
 
+    if(currentComment === undefined || currentComment === null) {
+        res.sendStatus(404);
+        return;
+    }
+
     if (currentComment.userId !== req.user.id && req.user.role !== "admin") {
         res.sendStatus(403);
         return;
     }
 
-    if (db.removeComment(idParseResult.data, commentIdParseResult.data)) {
+    if (db.deleteComment(idParseResult.data, commentIdParseResult.data)) {
         res.sendStatus(200);
         return;
     }

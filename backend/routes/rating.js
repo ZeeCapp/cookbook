@@ -10,21 +10,23 @@ ratingRouter.use(authenticate());
 ratingRouter.use(authorize(["admin", "user"]));
 
 ratingRouter.post("/:recipeId/:value", async (req, res) => {
-    const idParseResult = await z.number().min(1).safeParseAsync(Number.parseInt(req.params.recipeId));
-    const valueParseResult = await z.number().min(1).max(5).safeParseAsync(Number.parseInt(req.params.id));
+    const ratingBlueprint = z.object({
+        recipeId: z.number().min(1),
+        value: z.number().min(1).max(5)
+    });
 
-    if (idParseResult.error) {
+    console.log(req.params);
+
+    const { data, error } = await ratingBlueprint.safeParseAsync({
+        recipeId: Number.parseInt(req.params.recipeId),
+        value: Number.parseFloat(req.params.value)
+    });
+
+    if (error) {
         res.status(400);
         res.send({
-            error: "Id must be a number"
-        });
-        return;
-    }
-
-    if (valueParseResult.error) {
-        res.status(400);
-        res.send({
-            error: "Value must be a number between 1 and 5 (inclusive)"
+            error: "Validation error",
+            detail: error.format()
         });
         return;
     }
@@ -34,7 +36,14 @@ ratingRouter.post("/:recipeId/:value", async (req, res) => {
        */
     const db = req.app.get("db");
 
-    if (db.addRating(req.user.id, idParseResult.data, valueParseResult.data)) {
+    const currentRecipe = db.getRecipeById(data.recipeId);
+
+    if (currentRecipe === undefined || currentRecipe === null) {
+        res.sendStatus(404);
+        return;
+    }
+
+    if (db.addRating(req.user.id, data.recipeId, data.value)) {
         res.sendStatus(201);
         return;
     }
@@ -48,7 +57,8 @@ ratingRouter.delete("/:recipeId", async (req, res) => {
     if (idParseResult.error) {
         res.status(400);
         res.send({
-            error: "Id must be a number > 0"
+            error: "Validation error",
+            detail: idParseResult.error.format()
         });
         return;
     }
@@ -60,12 +70,17 @@ ratingRouter.delete("/:recipeId", async (req, res) => {
 
     const currentRating = db.getRatingById(idParseResult.data);
 
+    if (currentRating === undefined || currentRating === null) {
+        res.sendStatus(404);
+        return;
+    }
+
     if (currentRating.userId !== req.user.id && req.user.role !== "admin") {
         res.sendStatus(403);
         return;
     }
 
-    if (db.removeRating(idParseResult.data)) {
+    if (db.deleteRating(idParseResult.data)) {
         res.sendStatus(200);
         return;
     }

@@ -15,7 +15,8 @@ bookmarkRouter.post("/:recipeId", async (req, res) => {
     if (validationResult.success === false) {
         res.status(400);
         res.send({
-            error: "Id must be a number > 0"
+            error: "Validation error",
+            detail: validationResult.error
         })
         return;
     }
@@ -44,7 +45,8 @@ bookmarkRouter.delete("/:recipeId", async (req, res) => {
     if (validationResult.success === false) {
         res.status(400);
         res.send({
-            error: "Id must be a number > 0"
+            error: "Validation error",
+            detail: validationResult.error
         })
         return;
     }
@@ -54,7 +56,15 @@ bookmarkRouter.delete("/:recipeId", async (req, res) => {
         * @type db
         */
         const db = req.app.get("db");
-        if (db.removeBookmark(req.user.id, validationResult.data)) {
+
+        const currentBookmark = db.getBookmarkByRecipeAdnUserId(req.user.id, validationResult.data);
+
+        if (currentBookmark === undefined || currentBookmark === null) {
+            res.sendStatus(404);
+            return;
+        }
+
+        if (db.deleteBookmark(req.user.id, validationResult.data)) {
             res.sendStatus(200);
         } else {
             res.sendStatus(400);

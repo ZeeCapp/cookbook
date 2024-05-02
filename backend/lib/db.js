@@ -31,10 +31,21 @@ export default class db {
         return data.ratings.find((rating => rating.id === idNumber));
     }
 
+    getBookmarkByRecipeAdnUserId(userId, recipeId) {
+        if (userId && recipeId) {
+            return data.bookmarks.find(bookmark => bookmark.recipeId === recipeId && bookmark.userId === userId);
+        }
+        return undefined;
+    }
+
     #getAvgRatingByRecipeId(recipeId) {
         const ratings = this.#getRatingsByRecipeId(recipeId);
 
-        return ratings.reduce((prevValue, currentValue) => { return prevValue + currentValue.value }, 0) / ratings.length
+        if (ratings === null || ratings === undefined || Array.isArray(ratings) && ratings.length === 0) {
+            return 0;
+        }
+
+        return ratings.reduce((prevValue, currentValue) => { return prevValue + currentValue.value }, 0) / ratings.length;
     }
 
     #getUserById(id) {
@@ -122,7 +133,7 @@ export default class db {
         return false;
     }
 
-    removeBookmark(userId, recipeId) {
+    deleteBookmark(userId, recipeId) {
         if (userId && recipeId) {
             const bookmarkIndex = data.bookmarks.findIndex(bookmark => bookmark.recipeId === recipeId && bookmark.userId === userId);
 
@@ -142,7 +153,7 @@ export default class db {
         return false;
     }
 
-    removeComment(recipeId, commentId) {
+    deleteComment(recipeId, commentId) {
         const commentIndex = data.comments.findIndex(({ id, recipeId: recId }) => { return id === commentId && recId === recipeId });
 
         if (commentIndex > -1) {
@@ -160,7 +171,7 @@ export default class db {
         return false;
     }
 
-    removeRating(ratingId) {
+    deleteRating(ratingId) {
         const ratingIndex = data.ratings.findIndex(({ id }) => { return id === ratingId });
 
         if (ratingIndex > -1) {
@@ -212,7 +223,7 @@ export default class db {
         return false;
     }
 
-    removeRecipe(recipeId) {
+    deleteRecipe(recipeId) {
         const recipeIndex = data.recipes.findIndex(({ id }) => { return id === recipeId });
 
         if (recipeIndex > -1) {
