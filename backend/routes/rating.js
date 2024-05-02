@@ -15,8 +15,6 @@ ratingRouter.post("/:recipeId/:value", async (req, res) => {
         value: z.number().min(1).max(5)
     });
 
-    console.log(req.params);
-
     const { data, error } = await ratingBlueprint.safeParseAsync({
         recipeId: Number.parseInt(req.params.recipeId),
         value: Number.parseFloat(req.params.value)
@@ -37,9 +35,18 @@ ratingRouter.post("/:recipeId/:value", async (req, res) => {
     const db = req.app.get("db");
 
     const currentRecipe = db.getRecipeById(data.recipeId);
+    const currentRating = db.getBookmarkByRecipeAndUserId(req.user.id, data.recipeId);
 
     if (currentRecipe === undefined || currentRecipe === null) {
         res.sendStatus(404);
+        return;
+    }
+
+    if(currentRating) {
+        res.status(400)
+        res.send({
+            error: "Recipe already rated"
+        });
         return;
     }
 

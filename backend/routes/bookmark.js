@@ -21,18 +21,30 @@ bookmarkRouter.post("/:recipeId", async (req, res) => {
         return;
     }
 
-    if (req.user && validationResult.success) {
-        /**
-        * @type db
-        */
-        const db = req.app.get("db");
-        if (db.createBookmark(req.user.id, Number.parseInt(validationResult.data))) {
-            res.sendStatus(201);
-            return;
-        } else {
-            res.sendStatus(400);
-            return;
-        }
+    /**
+    * @type db
+    */
+    const db = req.app.get("db");
+
+    const currentRecipe = db.getRecipeById(validationResult.data)
+    const currentBookmark = db.getBookmarkByRecipeAndUserId(req.user.id, validationResult.data);
+
+    if (currentRecipe === undefined || currentRecipe === null) {
+        res.sendStatus(404);
+        return;
+    }
+
+    if (currentBookmark !== undefined && currentBookmark !== null) {
+        res.status(400);
+        res.send({
+            error: "Recipe already bookmarked"
+        });
+        return;
+    }
+
+    if (db.createBookmark(req.user.id, Number.parseInt(validationResult.data))) {
+        res.sendStatus(201);
+        return;
     } else {
         res.sendStatus(400);
         return;

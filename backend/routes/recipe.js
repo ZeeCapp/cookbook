@@ -20,7 +20,17 @@ recipesRouter.get("/", async (req, res) => {
     */
     const db = req.app.get("db");
 
-    res.send(db.getUsersRecipeList(req.user.id));
+    res.send(db.getRecipeListWithFavourites(req.user.id));
+    return;
+});
+
+recipesRouter.get("/bookmarked", async (req, res) => {
+    /**
+    * @type db
+    */
+    const db = req.app.get("db");
+
+    res.send(db.getBookmarkedRecipes(req.user.id));
     return;
 });
 
@@ -41,7 +51,7 @@ recipesRouter.get("/:id", async (req, res) => {
     */
     const db = req.app.get("db");
 
-    const recipe = db.getRecipeDetail(validationResult.data);
+    const recipe = db.getRecipeDetail(req.user.id, validationResult.data);
 
     if (recipe === undefined) {
         res.sendStatus(404);

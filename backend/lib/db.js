@@ -31,7 +31,7 @@ export default class db {
         return data.ratings.find((rating => rating.id === idNumber));
     }
 
-    getBookmarkByRecipeAdnUserId(userId, recipeId) {
+    getBookmarkByRecipeAndUserId(userId, recipeId) {
         if (userId && recipeId) {
             return data.bookmarks.find(bookmark => bookmark.recipeId === recipeId && bookmark.userId === userId);
         }
@@ -72,7 +72,7 @@ export default class db {
         return data.ratings.filter((rating => rating.recipeId === idNumber));
     }
 
-    getRecipeDetail(recipeId) {
+    getRecipeDetail(userId, recipeId) {
         const recipe = this.getRecipeById(recipeId);
 
         if (recipe === undefined) return undefined;
@@ -84,10 +84,13 @@ export default class db {
             comment.user = _.pick(this.#getUserById(comment.userId), ["id", "name", "surname"]);
         }
 
+        const userRating = data.ratings.find((rating) => { return (rating.userId === userId && rating.recipeId === recipeId) });
+
         return {
             ...(_.pick(recipe, ["id", "title", "previewBase64", "contentHTML"])),
             ingredients: data.ingredients.filter(ingredient => ingredient.recipeId === recipe.id).map(({ id, title, content }) => { return { id, title, content } }),
             avgRating: this.#getAvgRatingByRecipeId(recipe.id),
+            userRating: userRating?.value,
             user: {
                 ...(_.pick(user, ["id", "name", "surname"]))
             },
@@ -95,7 +98,30 @@ export default class db {
         }
     }
 
-    getUsersRecipeList(userId) {
+    getBookmarkedRecipes(userId) {
+        const bookmarkedRecipesIds = data.bookmarks.filter((bookmark) => { return bookmark.userId === userId }).map(bookmark => bookmark.recipeId);
+
+        const bookmarkedRecipes = [];
+
+        for (const bookmarkedRecipeId of bookmarkedRecipesIds) {
+            const recipe = data.recipes.find(recipe => recipe.id === bookmarkedRecipeId)
+
+            bookmarkedRecipes.push(_.cloneDeep(recipe));
+        }
+
+        for (const recipe of bookmarkedRecipes) {
+            recipe.user = _.pick(this.#getUserById(recipe.userId), ["id", "name", "surname"]);
+            recipe.avgRating = this.#getAvgRatingByRecipeId(recipe.id);
+
+            if (userId !== null && userId !== undefined) {
+                recipe.favourite = data.bookmarks.find(bookmark => bookmark.userId === userId && bookmark.recipeId === recipe.id) ? true : false;
+            }
+        }
+
+        return bookmarkedRecipes.map((recipe) => { return _.pick(recipe, ["id", "previewBase64", "title", "user", "avgRating", "favourite"]) });
+    }
+
+    getRecipeListWithFavourites(userId) {
         const recipes = _.cloneDeep(data.recipes);
 
         for (const recipe of recipes) {
@@ -160,6 +186,13 @@ export default class db {
             data.comments.splice(commentIndex, 1);
         }
         return true;
+    }
+
+    getRatingByUserAndRecipeId(userId, recipeId) {
+        if (userId && recipeId) {
+            return data.ratings.find((rating) => { return rating.userId == userId && rating.recipeId === recipeId });
+        }
+        return undefined;
     }
 
     addRating(userId, recipeId, value) {
