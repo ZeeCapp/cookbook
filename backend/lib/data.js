@@ -30,8 +30,15 @@ export default {
             id: 1,
             userId: 1,
             title: "Bábovka",
-            previewBase64: "",
-            contentHTML: ""
+            previewBase64: "base64dwZDHD24..",
+            contentHTML: "<h1>Bábovka</h1>"
+        },
+        {
+            id: 2,
+            userId: 2,
+            title: "Řízky v trojobalu",
+            previewBase64: "base64dwZDHD24..",
+            contentHTML: "<h1>Řízky</h1>"
         }
     ],
     ingredients: [

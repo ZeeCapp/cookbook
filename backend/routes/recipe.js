@@ -7,10 +7,6 @@ import { authenticate, authorize } from "../middleware/authMiddleware.js"
 
 const recipesRouter = express.Router();
 
-recipesRouter.get("/diagnose", (req, res) => {
-    res.send(data);
-})
-
 recipesRouter.use(authenticate());
 recipesRouter.use(authorize(["admin", "user"]));
 
@@ -20,7 +16,22 @@ recipesRouter.get("/", async (req, res) => {
     */
     const db = req.app.get("db");
 
-    res.send(db.getRecipeListWithFavourites(req.user.id));
+    if (req.query.userId) {
+        const { data, error } = await z.number().min(1).safeParseAsync(Number.parseInt(req.query.userId));
+
+        if(error) {
+            res.send({
+                error: "Validation error",
+                detail: error.format()
+            });
+            return;
+        }
+
+        res.send(db.getRecipesByUserId(data));
+        return;
+    }
+
+    res.send(db.getRecipeListWithBookmarks(req.user.id));
     return;
 });
 
