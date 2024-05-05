@@ -228,14 +228,16 @@ export default class db {
 
     addRecipe(userId, title, previewBase64 = "", contentHTML = "", ingredients) {
         if (userId && title) {
-            const newRecipe = { id: this.#generateId(data.recipes), userId, title, previewBase64, contentHTML };
+            const recipeId = this.#generateId(data.recipes)
+
+            const newRecipe = { id: recipeId, userId, title, previewBase64, contentHTML };
             data.recipes.push(newRecipe);
             if (Array.isArray(ingredients)) {
                 for (const ingredient of ingredients) {
                     data.ingredients.push({ id: this.#generateId(data.ingredients), recipeId: newRecipe.id, ...ingredient })
                 }
             }
-            return true;
+            return recipeId;
         }
         return false;
     }

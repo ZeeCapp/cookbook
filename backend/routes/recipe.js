@@ -19,7 +19,7 @@ recipesRouter.get("/", async (req, res) => {
     if (req.query.userId) {
         const { data, error } = await z.number().min(1).safeParseAsync(Number.parseInt(req.query.userId));
 
-        if(error) {
+        if (error) {
             res.send({
                 error: "Validation error",
                 detail: error.format()
@@ -100,8 +100,13 @@ recipesRouter.post("/", async (req, res) => {
     */
     const db = req.app.get("db");
 
-    if (db.addRecipe(req.user.id, data.title, data.previewBase64, data.contentHTML, data.ingredients)) {
-        res.sendStatus(201);
+    const newId = db.addRecipe(req.user.id, data.title, data.previewBase64, data.contentHTML, data.ingredients);
+
+    if (newId) {
+        res.status(201);
+        res.send({
+            id: newId
+        })
         return;
     }
     res.sendStatus(400);
