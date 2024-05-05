@@ -69,7 +69,7 @@ bookmarkRouter.delete("/:recipeId", async (req, res) => {
         */
         const db = req.app.get("db");
 
-        const currentBookmark = db.getBookmarkByRecipeAdnUserId(req.user.id, validationResult.data);
+        const currentBookmark = db.getBookmarkByRecipeAndUserId(req.user.id, validationResult.data);
 
         if (currentBookmark === undefined || currentBookmark === null) {
             res.sendStatus(404);
