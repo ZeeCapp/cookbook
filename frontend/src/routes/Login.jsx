@@ -17,7 +17,7 @@ function Login() {
   const navigate = useNavigate();
 
   const axios = useContext(axiosContext);
-  const { user, setUser } = useContext(userContext);
+  const { setUser } = useContext(userContext);
 
   return (
     <div style={{ height: "100vh" }}>
@@ -68,6 +68,23 @@ function Login() {
 
         if (result?.data?.token) {
           setUser(result.data);
+
+          const decodedeString = decodeURIComponent(
+            atob(result.data.token)
+              .split("")
+              .map(function (c) {
+                return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+              })
+              .join("")
+          );
+
+          localStorage.setItem(
+            "user",
+            JSON.stringify({
+              token: result.data.token,
+              user: JSON.parse(decodedeString),
+            })
+          );
           navigate("/");
         }
       })
