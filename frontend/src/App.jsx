@@ -1,5 +1,5 @@
-import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.min.css";
+import "bootstrap/dist/css/bootstrap.css";
 
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -11,6 +11,7 @@ import { useAuthInterceptor } from "./contexts/axiosContext";
 import Layout from "./routes/Layout";
 import RecipeList from "./routes/Index";
 import Recipe from "./routes/Recipe";
+import Bookmarks from "./routes/Bookmarks";
 
 function AxiosInterceptorProvider({ children }) {
   useAuthInterceptor();
@@ -42,7 +43,10 @@ function App() {
                 index
                 element={<RecipeList />}
               ></Route>
-              <Route path="/bookmarks"></Route>
+              <Route
+                path="/bookmarks"
+                element={<Bookmarks />}
+              ></Route>
               <Route path="/create"></Route>
             </Route>
           </Routes>

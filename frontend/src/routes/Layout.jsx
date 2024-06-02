@@ -1,13 +1,15 @@
 import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 
 import { userContext } from "../contexts/userContext";
 import colors from "../colors";
 
 function Layout() {
-  const { user } = useContext(userContext);
+  const { user, setUser } = useContext(userContext);
   const currentLocation = useLocation();
 
   return (
@@ -16,7 +18,14 @@ function Layout() {
         <Navbar style={{ backgroundColor: colors.accentMedium }}>
           <Container>
             <Navbar.Brand>Cookbook</Navbar.Brand>
-            <div>{user?.user?.email}</div>
+            {user && (
+              <DropdownButton
+                variant="secondary"
+                title={user?.user?.email}
+              >
+                <Dropdown.Item onClick={logout}>Logout</Dropdown.Item>
+              </DropdownButton>
+            )}
           </Container>
         </Navbar>
         <div>
@@ -84,6 +93,12 @@ function Layout() {
       </div>
     </>
   );
+
+  function logout() {
+    localStorage.clear();
+    setUser();
+    window.location.pathname = "/login";
+  }
 }
 
 export default Layout;

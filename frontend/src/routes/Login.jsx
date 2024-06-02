@@ -6,6 +6,7 @@ import Form from "react-bootstrap/Form";
 import PrimaryButton from "react-bootstrap/Button";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Spinner from "react-bootstrap/Spinner";
+import Alert from "react-bootstrap/Alert";
 
 import { axiosContext } from "../contexts/axiosContext";
 import { userContext } from "../contexts/userContext";
@@ -42,6 +43,9 @@ function Login() {
               }}
             />
           </FloatingLabel>
+          <Alert variant="info">
+            Pro základní přihlášení použijte email <strong>admin@test.cz</strong>
+          </Alert>
           <div className="d-flex justify-content-center">
             <PrimaryButton onClick={login}>Login</PrimaryButton>
           </div>
@@ -67,8 +71,6 @@ function Login() {
         setLoading(false);
 
         if (result?.data?.token) {
-          setUser(result.data);
-
           const decodedeString = decodeURIComponent(
             atob(result.data.token)
               .split("")
@@ -77,6 +79,11 @@ function Login() {
               })
               .join("")
           );
+
+          setUser({
+            token: result.data.token,
+            user: JSON.parse(decodedeString),
+          });
 
           localStorage.setItem(
             "user",

@@ -2,10 +2,9 @@ import { useState, useEffect, useContext } from "react";
 import { axiosContext } from "../contexts/axiosContext";
 import { Link } from "react-router-dom";
 import Card from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
+
 import Spinner from "react-bootstrap/esm/Spinner";
-
-import colors from "../colors";
-
 
 function RecipeList() {
   const [recipes, setRecipes] = useState();
@@ -17,7 +16,7 @@ function RecipeList() {
     setLoading(true);
 
     axios
-      .get("/recipe")
+      .get("/recipe/bookmarked")
       .then((result) => {
         setLoading(false);
         if (result.data) setRecipes(result.data);
@@ -39,11 +38,7 @@ function RecipeList() {
         <div style={{ display: "flex", flexDirection: "column", width: "100%", padding: "10px", gap: "15px" }}>
           {recipes.map((recipe) => {
             return (
-              <Link
-                
-                to={`/recipe/${recipe.id}`}
-                key={recipe.id}
-              >
+              <Link to={`/recipe/${recipe.id}`} key={recipe.id}>
                 <Card style={{ width: "100%" }}>
                   <Card.Img
                     variant="top"
@@ -52,18 +47,12 @@ function RecipeList() {
                   <Card.Body>
                     <Card.Title style={{ display: "flex", justifyContent: "space-between" }}>
                       <div>{recipe.title}</div>
-                      <span
-                      style={{ padding: "5px 10px 5px 10px", backgroundColor: colors.primaryMedium, borderRadius: "5px"}}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          recipe.bookmarked ? removeBookmark(recipe.id) : bookmark(recipe.id);
-                        }}
-                      >
+                      <Button variant="dark">
                         <i
                           className="bi bi-star-fill"
                           style={{ fontSize: "20px", color: recipe.bookmarked ? "yellow" : "white" }}
                         ></i>
-                      </span>
+                      </Button>
                     </Card.Title>
                   </Card.Body>
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 15px 5px 15px" }}>
@@ -78,28 +67,6 @@ function RecipeList() {
       )}
     </>
   );
-
-  function removeBookmark(id) {
-    axios
-      .delete(`/bookmark/${id}`)
-      .then((result) => {
-        window.location.reload();
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }
-
-  function bookmark(id) {
-    axios
-      .post(`/bookmark/${id}`)
-      .then((result) => {
-        window.location.reload();
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }
 }
 
 export default RecipeList;
