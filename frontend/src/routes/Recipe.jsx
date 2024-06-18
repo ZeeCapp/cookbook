@@ -61,11 +61,14 @@ function Layout() {
             </Container>
           </Navbar>
           <Container style={{ padding: "15px 5px 15px 5px", display: "flex", flexDirection: "column", gap: "15px" }}>
-            <img
-              src={`data:image/jpg;base64,${recipe.previewBase64}`}
-              style={{ width: "100%" }}
-              alt="preview"
-            ></img>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <img
+                src={`data:image/jpg;base64,${recipe.previewBase64}`}
+                style={{ width: "100%", maxWidth: "700px" }}
+                alt="preview"
+              ></img>
+            </div>
+
             <div
               style={{
                 display: "flex",

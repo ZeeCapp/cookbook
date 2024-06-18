@@ -38,11 +38,15 @@ function RecipeList() {
         <div style={{ display: "flex", flexDirection: "column", width: "100%", padding: "10px", gap: "15px" }}>
           {recipes.map((recipe) => {
             return (
-              <Link to={`/recipe/${recipe.id}`} key={recipe.id}>
+              <Link
+                to={`/recipe/${recipe.id}`}
+                key={recipe.id}
+              >
                 <Card style={{ width: "100%" }}>
                   <Card.Img
                     variant="top"
                     src={`data:image/jpg;base64,${recipe.previewBase64}`}
+                    style={{ height: 200 }}
                   />
                   <Card.Body>
                     <Card.Title style={{ display: "flex", justifyContent: "space-between" }}>

@@ -6,7 +6,6 @@ import Spinner from "react-bootstrap/esm/Spinner";
 
 import colors from "../colors";
 
-
 function RecipeList() {
   const [recipes, setRecipes] = useState();
   const [loading, setLoading] = useState(true);
@@ -36,15 +35,15 @@ function RecipeList() {
         </div>
       )}
       {recipes && (
-        <div style={{ display: "flex", flexDirection: "column", width: "100%", padding: "10px", gap: "15px" }}>
+        <div className="recipes-container">
           {recipes.map((recipe) => {
             return (
               <Link
-                
                 to={`/recipe/${recipe.id}`}
                 key={recipe.id}
+                className="recipe"
               >
-                <Card style={{ width: "100%" }}>
+                <Card>
                   <Card.Img
                     variant="top"
                     src={`data:image/jpg;base64,${recipe.previewBase64}`}
@@ -53,7 +52,11 @@ function RecipeList() {
                     <Card.Title style={{ display: "flex", justifyContent: "space-between" }}>
                       <div>{recipe.title}</div>
                       <span
-                      style={{ padding: "5px 10px 5px 10px", backgroundColor: colors.primaryMedium, borderRadius: "5px"}}
+                        style={{
+                          padding: "5px 10px 5px 10px",
+                          backgroundColor: colors.primaryMedium,
+                          borderRadius: "5px",
+                        }}
                         onClick={(e) => {
                           e.stopPropagation();
                           recipe.bookmarked ? removeBookmark(recipe.id) : bookmark(recipe.id);

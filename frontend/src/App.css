@@ -32,12 +32,26 @@ a {
   text-decoration: none;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
+.recipes-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 15px;
+  padding: 10px;
+}
 
-  to {
-    transform: rotate(360deg);
+.recipe {
+  width: 100%;
+  display: flex;
+}
+
+@media only screen and (min-width: 600px) {
+  .recipes-container {
+    flex-direction: row;
+    justify-content: center;
+  }
+  
+  .recipe {
+    max-width: 500px;
   }
 }
