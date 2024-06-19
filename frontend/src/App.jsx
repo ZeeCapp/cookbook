@@ -12,6 +12,7 @@ import Layout from "./routes/Layout";
 import RecipeList from "./routes/Index";
 import Recipe from "./routes/Recipe";
 import Bookmarks from "./routes/Bookmarks";
+import RecipeEditor from "./routes/RecipeEditor";
 
 function AxiosInterceptorProvider({ children }) {
   useAuthInterceptor();
@@ -47,7 +48,10 @@ function App() {
                 path="/bookmarks"
                 element={<Bookmarks />}
               ></Route>
-              <Route path="/create"></Route>
+              <Route
+                path="/create/:idOrNew"
+                element={<RecipeEditor />}
+              ></Route>
             </Route>
           </Routes>
         </AxiosInterceptorProvider>

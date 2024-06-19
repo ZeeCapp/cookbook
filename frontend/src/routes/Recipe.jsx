@@ -51,7 +51,7 @@ function Layout() {
                   ></i>{" "}
                   Back
                 </Link>
-                <Link to={`/edit/${params.id}`}>
+                <Link to={`/create/${params.id}`}>
                   <i
                     className="bi bi-pencil"
                     style={{ fontSize: "25px", color: colors.primaryDark }}

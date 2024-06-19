@@ -47,11 +47,11 @@ function Layout() {
         <Container>
           <div style={{ display: "flex", justifyContent: "center", gap: "10%" }}>
             <Link
-              to={"/create"}
+              to={"/create/new"}
               style={{
                 display: "flex",
                 alignItems: "center",
-                color: currentLocation.pathname === "/create" ? colors.accentDark : "white",
+                color: currentLocation.pathname.includes("/create") ? colors.accentDark : "white",
               }}
             >
               <i
