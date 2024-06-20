@@ -39,7 +39,10 @@ function RecipeEditor() {
           .get(`/recipe/${params.idOrNew}`)
           .then((result) => {
             setLoading(false);
-            if (result.data) setRecipe(result.data);
+            if (result.data) {
+              result.data.contentHTML = formatHTML(result.data.contentHTML);
+              setRecipe(result.data);
+            }
           })
           .catch((err) => {
             setLoading(false);
@@ -95,7 +98,7 @@ function RecipeEditor() {
             {recipe.previewBase64 && (
               <img
                 src={`data:image/png;base64,${recipe.previewBase64}`}
-                alt="Preview image"
+                alt="image"
                 style={{ position: "absolute", width: "100%", height: "100%", zIndex: -1, objectFit: "cover" }}
               />
             )}
@@ -318,6 +321,26 @@ function RecipeEditor() {
       };
       reader.readAsDataURL(ev.target.files[0]);
     }
+  }
+
+  function formatHTML(html) {
+    var tab = "    ";
+    var result = "";
+    var indent = "";
+
+    html.split(/>\s*</).forEach(function (element) {
+      if (element.match(/^\/\w/)) {
+        indent = indent.substring(tab.length);
+      }
+
+      result += indent + "<" + element + ">\r\n";
+
+      if (element.match(/^<?\w[^>]*[^\/]$/) && !element.startsWith("input")) {
+        indent += tab;
+      }
+    });
+
+    return result.substring(1, result.length - 3);
   }
 
   function postRecipe() {

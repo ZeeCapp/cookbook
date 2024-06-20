@@ -17,7 +17,14 @@ function Layout() {
       <div style={{ display: "flex", flexDirection: "column" }}>
         <Navbar style={{ backgroundColor: colors.accentMedium }}>
           <Container>
-            <Navbar.Brand>Cookbook</Navbar.Brand>
+            <Navbar.Brand>
+              <Link
+                style={{ color: colors.primaryDark }}
+                to={"/"}
+              >
+                Cookbook
+              </Link>
+            </Navbar.Brand>
             {user && (
               <DropdownButton
                 variant="secondary"

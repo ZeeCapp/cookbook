@@ -8,6 +8,7 @@ import Table from "react-bootstrap/Table";
 import colors from "../colors";
 import Comments from "../components/Comments";
 import { axiosContext } from "../contexts/axiosContext";
+import { userContext } from "../contexts/userContext";
 
 function Layout() {
   const [recipe, setRecipe] = useState();
@@ -15,9 +16,12 @@ function Layout() {
   const params = useParams();
 
   const axios = useContext(axiosContext);
+  const { user } = useContext(userContext).user;
 
   useEffect(() => {
     setLoading(true);
+
+    console.log(user);
 
     axios
       .get(`/recipe/${params.id}`)
@@ -48,15 +52,17 @@ function Layout() {
                   <i
                     className="bi bi-arrow-left-circle-fill"
                     style={{ marginRight: "5px", fontSize: "25px", color: "inherit" }}
-                  ></i>{" "}
+                  ></i>
                   Back
                 </Link>
-                <Link to={`/create/${params.id}`}>
-                  <i
-                    className="bi bi-pencil"
-                    style={{ fontSize: "25px", color: colors.primaryDark }}
-                  ></i>{" "}
-                </Link>
+                {(user.role === "admin" || user.id === recipe.user.id) && (
+                  <Link to={`/create/${params.id}`}>
+                    <i
+                      className="bi bi-pencil"
+                      style={{ fontSize: "25px", color: colors.primaryDark }}
+                    ></i>
+                  </Link>
+                )}
               </Navbar.Brand>
             </Container>
           </Navbar>
@@ -85,7 +91,31 @@ function Layout() {
                 <div>{`${recipe.user.name} ${recipe.user.surname}`}</div>
               </h6>
             </div>
-
+            <div
+              className="star4"
+              style={{ display: "flex", gap: 5 }}
+            >
+              <i
+                className="bi bi-star-fill"
+                style={{ fontSize: "20px", cursor: "pointer" }}
+              ></i>
+              <i
+                className="bi bi-star-fill"
+                style={{ fontSize: "20px", cursor: "pointer" }}
+              ></i>
+              <i
+                className="bi bi-star-fill"
+                style={{ fontSize: "20px", cursor: "pointer" }}
+              ></i>
+              <i
+                className="bi bi-star-fill"
+                style={{ fontSize: "20px", cursor: "pointer" }}
+              ></i>
+              <i
+                className="bi bi-star-fill"
+                style={{ fontSize: "20px", cursor: "pointer" }}
+              ></i>
+            </div>
             <div>
               <h5>Ingredience:</h5>
               <Table
