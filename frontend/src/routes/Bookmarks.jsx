@@ -1,12 +1,10 @@
 import { useState, useEffect, useContext } from "react";
 import { axiosContext } from "../contexts/axiosContext";
-import { Link } from "react-router-dom";
-import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
-
 import Spinner from "react-bootstrap/esm/Spinner";
 
-function RecipeList() {
+import RecipeList from "../components/RecipeList";
+
+function Bookmarks() {
   const [recipes, setRecipes] = useState();
   const [loading, setLoading] = useState(true);
 
@@ -34,43 +32,9 @@ function RecipeList() {
           <Spinner></Spinner>
         </div>
       )}
-      {recipes && (
-        <div style={{ display: "flex", flexDirection: "column", width: "100%", padding: "10px", gap: "15px" }}>
-          {recipes.map((recipe) => {
-            return (
-              <Link
-                to={`/recipe/${recipe.id}`}
-                key={recipe.id}
-              >
-                <Card style={{ width: "100%" }}>
-                  <Card.Img
-                    variant="top"
-                    src={`data:image/jpg;base64,${recipe.previewBase64}`}
-                    style={{ height: 200 }}
-                  />
-                  <Card.Body>
-                    <Card.Title style={{ display: "flex", justifyContent: "space-between" }}>
-                      <div>{recipe.title}</div>
-                      <Button variant="dark">
-                        <i
-                          className="bi bi-star-fill"
-                          style={{ fontSize: "20px", color: recipe.bookmarked ? "yellow" : "white" }}
-                        ></i>
-                      </Button>
-                    </Card.Title>
-                  </Card.Body>
-                  <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 15px 5px 15px" }}>
-                    <div>{`${recipe.user.name} ${recipe.user.surname}`}</div>
-                    <div style={{ display: "flex", alignItems: "center" }}>Hodnocení: {recipe.avgRating}</div>
-                  </div>
-                </Card>
-              </Link>
-            );
-          })}
-        </div>
-      )}
+      {recipes && <RecipeList recipes={recipes} />}
     </>
   );
 }
 
-export default RecipeList;
+export default Bookmarks;

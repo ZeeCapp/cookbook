@@ -51,7 +51,7 @@ function Layout() {
               style={{
                 display: "flex",
                 alignItems: "center",
-                color: currentLocation.pathname.includes("/create") ? colors.accentDark : "white",
+                color: currentLocation.pathname.includes("/create/new") ? colors.accentDark : "white",
               }}
             >
               <i
