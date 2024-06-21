@@ -119,9 +119,21 @@ export default {
   ratings: [
     {
       id: 1,
+      userId: 1,
+      recipeId: 1,
+      value: 4,
+    },
+    {
+      id: 2,
+      userId: 1,
+      recipeId: 2,
+      value: 3,
+    },
+    {
+      id: 3,
       userId: 2,
       recipeId: 1,
-      value: 4.5,
+      value: 5,
     },
   ],
   bookmarks: [

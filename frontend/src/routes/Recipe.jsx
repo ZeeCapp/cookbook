@@ -20,14 +20,13 @@ function Layout() {
 
   useEffect(() => {
     setLoading(true);
-
-    console.log(user);
-
     axios
       .get(`/recipe/${params.id}`)
       .then((result) => {
         setLoading(false);
-        if (result.data) setRecipe(result.data);
+        if (result.data) {
+          setRecipe(result.data);
+        }
       })
       .catch((err) => {
         setLoading(false);
@@ -92,28 +91,63 @@ function Layout() {
               </h6>
             </div>
             <div
-              className="star4"
+              className={recipe.userRating ? `star${recipe.userRating}` : ""}
               style={{ display: "flex", gap: 5 }}
             >
               <i
                 className="bi bi-star-fill"
                 style={{ fontSize: "20px", cursor: "pointer" }}
+                onClick={() => {
+                  if (recipe.userRating) {
+                    removeRating();
+                  } else {
+                    addRating(1);
+                  }
+                }}
               ></i>
               <i
                 className="bi bi-star-fill"
                 style={{ fontSize: "20px", cursor: "pointer" }}
+                onClick={() => {
+                  if (recipe.userRating) {
+                    removeRating();
+                  } else {
+                    addRating(2);
+                  }
+                }}
               ></i>
               <i
                 className="bi bi-star-fill"
                 style={{ fontSize: "20px", cursor: "pointer" }}
+                onClick={() => {
+                  if (recipe.userRating) {
+                    removeRating();
+                  } else {
+                    addRating(3);
+                  }
+                }}
               ></i>
               <i
                 className="bi bi-star-fill"
                 style={{ fontSize: "20px", cursor: "pointer" }}
+                onClick={() => {
+                  if (recipe.userRating) {
+                    removeRating();
+                  } else {
+                    addRating(4);
+                  }
+                }}
               ></i>
               <i
                 className="bi bi-star-fill"
                 style={{ fontSize: "20px", cursor: "pointer" }}
+                onClick={() => {
+                  if (recipe.userRating) {
+                    removeRating();
+                  } else {
+                    addRating(5);
+                  }
+                }}
               ></i>
             </div>
             <div>
@@ -154,6 +188,28 @@ function Layout() {
   function uploadComment(text) {
     axios
       .post(`/comment/${params.id}/${encodeURI(text)}`)
+      .then((result) => {
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+
+  function addRating(rating) {
+    axios
+      .post(`/rating/${params.id}/${rating}`)
+      .then((result) => {
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+
+  function removeRating() {
+    axios
+      .delete(`/rating/${params.id}`)
       .then((result) => {
         window.location.reload();
       })
